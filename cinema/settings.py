@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "cinemaAPI.apps.CinemaapiConfig"
+    "cinema_backend.apps.CinemaBackendConfig",
+    "cinema_users.apps.CinemaUsersConfig"
 ]
 
 MIDDLEWARE = [
@@ -39,7 +40,7 @@ ROOT_URLCONF = "cinema.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'cinema-react/build')],
+        "DIRS": [os.path.join(BASE_DIR, 'cinema_react/templates/frontend')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -61,11 +62,11 @@ WSGI_APPLICATION = "cinema.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": 'django.db.backends.mysql',
-        'NAME': 'cinema_db',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }
@@ -100,7 +101,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'cinema-react/build/static')
+    os.path.join(BASE_DIR, 'cinema_react/static')
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

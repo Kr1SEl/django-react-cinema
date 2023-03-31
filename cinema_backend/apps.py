@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CinemaapiConfig(AppConfig):
+class CinemaBackendConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "cinemaAPI"
+    name = "cinema_backend"
