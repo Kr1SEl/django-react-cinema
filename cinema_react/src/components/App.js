@@ -1,19 +1,16 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import MyRouter from './Router';
-import MovieListPage from './MovieListPage';
+import CinemaRouter from './Router';
+import { Provider } from 'react-redux';
+import store from './Store'
 
 
-export default class App extends Component{
-  constructor(props){
-    super(props);
-  }
+const App = () => (
+  <Provider store={store}>
+    <CinemaRouter />
+  </Provider>
+);
 
-  render(){
-    return <MyRouter/>
-  }
-}
+export default App;
 
-const appDiv = document.getElementById("app");
-render(<App name="Test website"/>, appDiv);
 

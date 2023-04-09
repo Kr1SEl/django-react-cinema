@@ -1,0 +1,42 @@
+@font-face {
+    font-family: 'gongo';
+    src: url('./Gongo_Light.woff');
+}
+
+@font-face {
+    font-family: 'gongo';
+    src: url('./Gongo_Bold.woff');
+    font-weight: bold;
+}
+
+body{
+    background-color: #000000;
+    color: white;
+    font-family: 'gongo';
+}
+
+div {
+    padding: 0px;
+}
+
+.icon {
+    filter: invert(80%);
+    padding-right: 7px;
+    padding-top: 4px;
+}
+
+.icon-price {
+    filter: invert(80%);
+    padding-right: 7px;
+    padding-top: 7px;
+}
+
+.icon-bar {
+    filter: invert(80%);
+    padding-right: 2px;
+    padding-top: 4px;
+}
+
+#app{
+    padding-top: 100px;
+} 
