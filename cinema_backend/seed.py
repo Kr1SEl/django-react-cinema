@@ -30,12 +30,8 @@ def create__moviesession(token):
         'Authorization': f'Bearer {token}',
         'Content-Type': 'application/json'
     }
-
-    print(headers)
-
     response = requests.request("POST", url, headers=headers, data=payload)
-
-    print(response.text)
+    return response.json()
 
 
 if __name__ == '__main__':
