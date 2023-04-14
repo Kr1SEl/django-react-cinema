@@ -171,6 +171,7 @@ export const reset_password_confim = (uid, token, new_password, re_new_password)
     };
     const body = JSON.stringify({ uid, token, new_password, re_new_password });
     try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
         await axios.post(`auth/users/reset_password_confirm/`, body, config);
         dispatch({
             type: PASSWORD_RESET_CONFIRM_SUCCESS
