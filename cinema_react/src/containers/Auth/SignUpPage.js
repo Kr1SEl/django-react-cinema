@@ -8,12 +8,15 @@ import {
     TextField,
     Button,
     Grid,
-    Link,
-} from '@material-ui/core';
+} from '@mui/material';
+import Alert from '@mui/lab/Alert';
+import { LoadingButton } from "@mui/lab";
 
 
 const Signup = ({ signup, isAuthenticated }) => {
-    const [accountCreated, setAccountCreated] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [formData, setFormData] = useState({
@@ -30,8 +33,6 @@ const Signup = ({ signup, isAuthenticated }) => {
 
     const { name, email, password, re_password } = formData;
 
-    // const onChange = (e) =>
-    //     setFormData({ ...formData, [e.target.name]: e.target.value });
     const onChange = (e) => {
         const { name, value } = e.target;
         if (name === 'email') {
@@ -40,12 +41,19 @@ const Signup = ({ signup, isAuthenticated }) => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
         if (password === re_password) {
             if (!Boolean(emailError)) {
-                signup(name, email, password, re_password);
-                setAccountCreated(true);
+                setLoading(true);
+                const success = await signup(name, email, password, re_password);
+                setLoading(false);
+                if (success) {
+                    setMessage('Account created! Check your e-mail!');
+                } else {
+                    setMessage('Account creation failed. Please, try again');
+                }
+                setAlertVisible(true);
             }
         } else {
             setError(true);
@@ -56,12 +64,20 @@ const Signup = ({ signup, isAuthenticated }) => {
         return <Redirect to='/' />
     }
 
-    // if (accountCreated) {
-    //     return <Redirect to='/' />
-    // }
-
     return (
         <Container maxWidth='xs'>
+            <br />
+            {
+                alertVisible && (
+                    <Alert
+                        severity={message === 'Account created! Check your e-mail!' ? 'success' : 'error'}
+                        onClose={() => setAlertVisible(false)}
+                    >
+                        {message}
+                    </Alert>
+                )
+            }
+            <br />
             <div className='mt-5'>
                 {error && (
                     <Typography variant='body2' color='error'>
@@ -135,14 +151,15 @@ const Signup = ({ signup, isAuthenticated }) => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <Button
+                            <LoadingButton
                                 type='submit'
                                 variant='contained'
                                 color='primary'
                                 fullWidth
+                                loading={loading}
                             >
                                 Sign Up
-                            </Button>
+                            </LoadingButton>
                         </Grid>
                     </Grid>
                 </form>

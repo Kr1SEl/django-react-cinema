@@ -12,7 +12,7 @@ import {
   FormHelperText,
   RadioGroup,
   Radio
-} from '@material-ui/core';
+} from '@mui/material';
 
 const HomePage = () => {
 

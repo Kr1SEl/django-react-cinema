@@ -25,6 +25,7 @@ export const login = (email, password) => async dispatch => {
     };
     const body = JSON.stringify({ email, password });
     try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
         const res = await axios.post(`/auth/jwt/create/`, body, config);
         dispatch({
             type: LOGIN_SUCCESS,
@@ -32,10 +33,12 @@ export const login = (email, password) => async dispatch => {
         });
 
         dispatch(load_user());
+        return true;
     } catch (err) {
         dispatch({
             type: LOGIN_FAIL
         });
+        return false;
     }
 };
 
@@ -47,15 +50,18 @@ export const signup = (name, email, password, re_password) => async dispatch => 
     };
     const body = JSON.stringify({ name, email, password, re_password });
     try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
         const res = await axios.post(`/auth/users/`, body, config);
         dispatch({
             type: SIGNUP_SUCCESS,
             payload: res.data
         });
+        return true;
     } catch (err) {
         dispatch({
             type: SIGNUP_FAIL
         });
+        return false;
     }
 };
 
@@ -70,14 +76,17 @@ export const verify = (uid, token) => async dispatch => {
     console.log(uid)
     console.log(token)
     try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
         await axios.post(`/auth/users/activation/`, body, config);
         dispatch({
             type: ACTIVATION_SUCCESS,
         });
+        return true;
     } catch (err) {
         dispatch({
             type: ACTIVATION_FAIL
         });
+        return false;
     }
 };
 
@@ -91,6 +100,7 @@ export const load_user = () => async dispatch => {
             }
         };
         try {
+            axios.defaults.baseURL = 'http://127.0.0.1:8000'
             const res = await axios.get(`/auth/users/me/`, config);
             dispatch({
                 type: LOAD_USER_SUCCESS,
@@ -119,6 +129,7 @@ export const checkAuthenticated = () => async dispatch => {
         };
         const body = JSON.stringify({ token: localStorage.getItem('access') });
         try {
+            axios.defaults.baseURL = 'http://127.0.0.1:8000'
             const res = await axios.post(`/auth/jwt/verify/`, body, config)
             if (res.data.code !== 'roken_not_valid') {
                 dispatch({
@@ -151,14 +162,17 @@ export const reset_password = (email) => async dispatch => {
 
     const body = JSON.stringify({ email });
     try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
         await axios.post(`auth/users/reset_password/`, body, config);
         dispatch({
             type: PASSWORD_RESET_SUCCESS
         })
+        return true;
     } catch (err) {
         dispatch({
             type: PASSWORD_RESET_FAIL
         });
+        return false;
     }
 };
 
@@ -176,10 +190,12 @@ export const reset_password_confim = (uid, token, new_password, re_new_password)
         dispatch({
             type: PASSWORD_RESET_CONFIRM_SUCCESS
         })
+        return true;
     } catch (err) {
         dispatch({
             type: PASSWORD_RESET_CONFIRM_FAIL
         });
+        return false;
     }
 };
 

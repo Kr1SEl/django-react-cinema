@@ -9,11 +9,18 @@ import {
     Button,
     Grid,
     Link,
-} from '@material-ui/core';
+    IconButton,
+    Snackbar
+} from '@mui/material';
+import Alert from '@mui/lab/Alert';
+import '../../../static/frontend/index.css';
+import { LoadingButton } from "@mui/lab";
 
 
 const Login = ({ login, isAuthenticated }) => {
-    const [loginSent, setLoginSent] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -24,130 +31,91 @@ const Login = ({ login, isAuthenticated }) => {
     const onChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-        setLoginSent(true);
-        login(email, password);
+    const onSubmit = async (e) => {
+        if (!isAuthenticated) {
+            e.preventDefault();
+            setLoading(true);
+            const success = await login(email, password);
+            setLoading(false);
+            if (success) {
+                setMessage('Login successful!');
+            } else {
+                setMessage('Login failed!');
+            }
+            setAlertVisible(true);
+        }
     };
 
     if (isAuthenticated) {
         return <Redirect to="/" />;
     }
 
-    if (!isAuthenticated && loginSent) {
-        return (
-            <Container maxWidth='xs'>
-                <Typography variant='body2' color='error'>
-                    Invalid email or password. Please try again.
+    return (
+        <Container maxWidth='xs'>
+            <br />
+            {
+                alertVisible && (
+                    <Alert
+                        severity={message === 'Login successful!' ? 'success' : 'error'}
+                        onClose={() => setAlertVisible(false)}
+                    >
+                        {message}
+                    </Alert>
+                )
+            }
+            <br />
+            <div className='mt-5'>
+                <Typography variant='h4' align='center' gutterBottom>
+                    Sign In
                 </Typography>
-                <div className='mt-5'>
-                    <Typography variant='h4' align='center' gutterBottom>
-                        Sign In
-                    </Typography>
-                    <Typography variant='body1' align='center'>
-                        Sign into your Account
-                    </Typography>
-                    <form onSubmit={onSubmit}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant='outlined'
-                                    fullWidth
-                                    label='Email'
-                                    name='email'
-                                    value={email}
-                                    onChange={onChange}
-                                    required
-                                    error={true}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant='outlined'
-                                    fullWidth
-                                    label='Password'
-                                    type='password'
-                                    name='password'
-                                    value={password}
-                                    onChange={onChange}
-                                    required
-                                    error={true}
-                                    inputProps={{
-                                        minLength: 8,
-                                        maxLength: 20,
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Button
-                                    type='submit'
-                                    variant='contained'
-                                    color='primary'
-                                    fullWidth
-                                >
-                                    Sign In
-                                </Button>
-                            </Grid>
+                <Typography variant='body1' align='center'>
+                    Sign into your Account
+                </Typography>
+                <form onSubmit={onSubmit}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant='outlined'
+                                fullWidth
+                                label='Email'
+                                name='email'
+                                value={email}
+                                onChange={onChange}
+                                required
+                            />
                         </Grid>
-                    </form>
-                </div>
-            </Container>
-        );
-    } else {
-        return (
-            <Container maxWidth='xs'>
-                <div className='mt-5'>
-                    <Typography variant='h4' align='center' gutterBottom>
-                        Sign In
-                    </Typography>
-                    <Typography variant='body1' align='center'>
-                        Sign into your Account
-                    </Typography>
-                    <form onSubmit={onSubmit}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant='outlined'
-                                    fullWidth
-                                    label='Email'
-                                    name='email'
-                                    value={email}
-                                    onChange={onChange}
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant='outlined'
-                                    fullWidth
-                                    label='Password'
-                                    type='password'
-                                    name='password'
-                                    value={password}
-                                    onChange={onChange}
-                                    required
-                                    inputProps={{
-                                        minLength: 8,
-                                        maxLength: 20,
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Button
-                                    type='submit'
-                                    variant='contained'
-                                    color='primary'
-                                    fullWidth
-                                >
-                                    Sign In
-                                </Button>
-                            </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant='outlined'
+                                fullWidth
+                                label='Password'
+                                type='password'
+                                name='password'
+                                value={password}
+                                onChange={onChange}
+                                required
+                                inputProps={{
+                                    minLength: 8,
+                                    maxLength: 20,
+                                }}
+                            />
                         </Grid>
-                    </form>
-                </div>
-            </Container>
-        );
-    }
+                        <Grid item xs={12}>
+                            <LoadingButton
+                                type='submit'
+                                variant='contained'
+                                color='primary'
+                                fullWidth
+                                loading={loading}
+                            >
+                                Sign In
+                            </LoadingButton>
+                        </Grid>
+                    </Grid>
+                </form>
+            </div>
+        </Container >
+    );
 };
 
 

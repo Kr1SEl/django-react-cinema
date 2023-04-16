@@ -81,17 +81,17 @@ class HallAPIView(APIView):
 
 class MovieSessionAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request, movie_id=None):
         session = MovieSession.objects.filter(movie_id=movie_id).values()
         return Response(session)
 
-    def post(self, request, pk=None):
-        if pk:
+    def post(self, request, movie_id=None):
+        if movie_id:
             return JsonResponse({'error': 'Post to movie session with ID is not allowed'}, status=400)
         if (request.user.is_superuser):
-            movie = Movie.objects.get(pk=request.data['movie_id'])
+            movie = Movie.objects.get(id=request.data['movie_id'])
             hall = Hall.objects.get(hall_number=request.data['hall_number'])
             starting_datetime = datetime.strptime(
                 f"{request.data['starting_date']} {request.data['starting_time']}", '%Y-%m-%d %H:%M:%S')

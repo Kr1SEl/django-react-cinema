@@ -5,63 +5,101 @@ import { verify } from "../../actions/auth";
 import {
     Container,
     Typography,
-    TextField,
     Button,
-    Grid,
-    Link,
-} from '@material-ui/core';
+    Box,
+    Snackbar,
+    Card,
+    CardContent
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { LoadingButton } from "@mui/lab";
+import Alert from '@mui/lab/Alert';
 
+const useStyles = makeStyles((theme) => ({
+    container: {
+        display: 'flex!important',
+        flexDirection: 'column!important',
+        alignItems: 'center!important',
+        justifyContent: 'center!important',
+        minHeight: '55vh!important',
+    },
+    heading: {
+        marginBottom: `${theme.spacing(3)} !important`,
+        fontFamily: "gongo!important",
+    },
+    card: {
+        width: '100%',
+        padding: `${theme.spacing(3)} !important`,
+        borderRadius: '12px!important',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)!important',
+    },
+    button: {
+        marginTop: `${theme.spacing(4)} !important`,
+        padding: `${theme.spacing(1, 2)} !important`,
+    },
+    icon: {
+        marginRight: `${theme.spacing(1)} !important`,
+    },
+}));
 
 const Activation = ({ verify, match }) => {
-    const [verified, setVerified] = useState(false);
+    const classes = useStyles();
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [severity, setSeverity] = useState('error');
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState('');
 
 
-    const verifyAccount = (e) => {
+    const verifyAccount = async (e) => {
         const uid = match.params.uid;
         const token = match.params.token;
-        console.log(uid)
-        console.log(token)
-        verify(uid, token);
-        setVerified(true);
+        setLoading(true);
+        const success = await verify(uid, token);
+        setLoading(false);
+        if (success) {
+            setMessage('Verification succesfull. Now you can login to your account!');
+            setSeverity('success');
+            setIsButtonDisabled(true);
+        } else {
+            setMessage('Verification failed!');
+            setSeverity('error');
+        }
+        setOpen(true);
     };
 
 
-    if (verified) {
-        return (<Container maxWidth='xs'>
-            <div
-                className='d-flex flex-colun justify-content-center align-items-center'
-                style={{ marginTop: '200px' }}
-            >
-                <h1>Your account was succesfully verified</h1>
-                <h2>You can now login to your account</h2>
-                <Grid item xs={12}>
-                    <Link variant="h6" to="/">
-                        Home Page
-                    </Link>
-                </Grid>
-            </div>
-        </Container>)
-    }
-
     return (
-        <Container maxWidth='xs'>
-            <div
-                className='d-flex flex-colun justify-content-center align-items-center'
-                style={{ marginTop: '200px' }}
-            >
-                <h1>Verify your account</h1>
-                <Grid item xs={12}>
-                    <Button
-                        type='submit'
-                        variant='contained'
-                        color='primary'
-                        onClick={verifyAccount}
-                        fullWidth
-                    >
-                        Verify
-                    </Button>
-                </Grid>
-            </div>
+        <Container maxWidth="sm" className={classes.container}>
+            <Card className={classes.card}>
+                <CardContent>
+                    <Snackbar open={open} autoHideDuration={6000} onClose={() => setOpen(false)} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                        <Alert onClose={() => setOpen(false)} severity={severity} sx={{ width: '100%' }}>
+                            {message}
+                        </Alert>
+                    </Snackbar>
+                    <Typography variant="h4" align="center" className={classes.heading}>
+                        <b>Account Verification</b>
+                    </Typography>
+                    <Typography variant="body1" align="center">
+                        Click the button below to verify your account.
+                    </Typography>
+                    <Box textAlign="center">
+                        <LoadingButton
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                            onClick={verifyAccount}
+                            loading={loading}
+                            disabled={isButtonDisabled}
+                        >
+                            <CheckCircleOutlineIcon className={classes.icon} />
+                            Verify
+                        </LoadingButton>
+                    </Box>
+                </CardContent>
+            </Card>
         </Container>
     );
 };

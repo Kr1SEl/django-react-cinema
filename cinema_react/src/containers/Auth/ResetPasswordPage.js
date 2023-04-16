@@ -9,32 +9,54 @@ import {
     Button,
     Grid,
     Link,
-} from '@material-ui/core';
+    IconButton,
+    Snackbar
+} from '@mui/material';
+import Alert from '@mui/lab/Alert';
+import { LoadingButton } from "@mui/lab";
 
 
 const ResetPassword = ({ reset_password }) => {
-    const [requestSent, setRequestSent] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [message, setMessage] = useState('');
     const [formData, setFormData] = useState({
         email: '',
     });
+    const [loading, setLoading] = useState(false);
 
     const { email } = formData;
 
     const onChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        reset_password(email);
-        setRequestSent(true);
+        setLoading(true);
+        const success = await reset_password(email);
+        setLoading(false);
+        if (success) {
+            setMessage('Reset link was sent to your email!');
+        } else {
+            setMessage('E-mail is not registered!');
+        }
+        setAlertVisible(true);
     };
 
-    // if (requestSent) {
-
-    // }
 
     return (
         <Container maxWidth='xs'>
+            <br />
+            {
+                alertVisible && (
+                    <Alert
+                        severity={message === 'Reset link was sent to your email!' ? 'success' : 'error'}
+                        onClose={() => setAlertVisible(false)}
+                    >
+                        {message}
+                    </Alert>
+                )
+            }
+            <br />
             <div className='mt-5'>
                 <Typography variant='h4' align='center' gutterBottom>
                     Reset password
@@ -57,14 +79,15 @@ const ResetPassword = ({ reset_password }) => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <Button
-                                type='submit'
-                                variant='contained'
-                                color='primary'
+                            <LoadingButton
+                                type="submit"
+                                variant="contained"
+                                color="primary"
                                 fullWidth
+                                loading={loading}
                             >
                                 Reset Password
-                            </Button>
+                            </LoadingButton>
                         </Grid>
                     </Grid>
                 </form>

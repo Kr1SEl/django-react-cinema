@@ -7,11 +7,19 @@ import {
     Button,
     Grid,
     Link,
-} from '@material-ui/core';
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
+import '../../../static/frontend/index.css';
 import LoginPage from "./LoginPage";
 import SignUpPage from "./SignUpPage";
 import ResetPasswordPage from "./ResetPasswordPage";
 
+
+const SharpButton = withStyles({
+    root: {
+        borderRadius: 0,
+    },
+})(Button);
 
 const Account = () => {
     const [activeButton, setActiveButton] = useState(1);
@@ -27,9 +35,23 @@ const Account = () => {
                 <Grid item>
                     <Typography variant='body2' style={{ marginLeft: '15px' }}>
                         Forgot your password?{' '}
-                        <Link href='/#' variant='body2' onClick={() => handleButtonClick(3)}>
+                        <Button
+                            variant="text"
+                            style={{
+                                color: 'primary',
+                                textDecoration: 'underline',
+                                textTransform: 'none',
+                                padding: 0,
+                                minWidth: 0,
+                                margin: 0,
+                                fontSize: 'inherit',
+                                fontWeight: 'inherit',
+                                lineHeight: 'inherit',
+                            }}
+                            onClick={() => handleButtonClick(3)}
+                        >
                             Reset Password
-                        </Link>
+                        </Button>
                     </Typography>
                 </Grid>
             </Grid>
@@ -46,20 +68,22 @@ const Account = () => {
 
     return (
         <div>
-            <Button
+            <SharpButton
+                className="full-width-button"
                 variant={activeButton === 1 ? "contained" : "outlined"}
                 color={activeButton === 1 ? "secondary" : "primary"}
                 onClick={() => handleButtonClick(1)}
             >
                 Log In
-            </Button>
-            <Button
+            </SharpButton>
+            <SharpButton
+                className="full-width-button"
                 variant={activeButton === 2 ? "contained" : "outlined"}
                 color={activeButton === 2 ? "secondary" : "primary"}
                 onClick={() => handleButtonClick(2)}
             >
                 Sign Up
-            </Button>
+            </SharpButton>
             {activeButton === 1 ? loginPage() : activeButton === 2 ? signupPage() : activeButton === 3 ? resetPage() : null}
         </div>
     );

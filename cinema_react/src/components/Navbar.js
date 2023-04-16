@@ -1,11 +1,19 @@
 import React, { useState, Fragment } from 'react';
-import { AppBar, Toolbar, Typography, Button, Drawer } from '@material-ui/core';
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Button,
+    Drawer,
+    Snackbar
+} from '@mui/material';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import Account from '../containers/Auth/AccountPage';
 import '../../static/frontend/index.css';
 import { logout } from '../actions/auth';
 import { connect } from 'react-redux';
+import Alert from '@mui/lab/Alert';
 import AccountSvg from '../../static/frontend/svg/account.svg';
 
 const useStyles = makeStyles((theme) => ({
@@ -33,34 +41,21 @@ const useStyles = makeStyles((theme) => ({
     spacer: {
         flexGrow: 1,
     },
-    loginButton: {
-        marginLeft: "auto",
-        border: "2px solid #DC4C64",
-        fontFamily: "gongo",
-        fontSize: 20,
-        paddingLeft: "13px",
-        paddingRight: "10px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        transition: "all 0.2s ease-in-out",
-        boxShadow: "none",
-        "&:hover": {
-            boxShadow: "0px 0px 10px rgba(255,255,255,0.7)",
-            transform: "scale(1.05)",
-            backgroundColor: "transparent",
-        },
-    }
+    icon: {
+        marginRight: theme.spacing(1),
+    },
 }));
 
 const Navbar = ({ logout, isAuthenticated }) => {
     const classes = useStyles();
     const [hover, setHover] = useState(false);
     const [dr, setDr] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const logoutHandler = () => {
         setDr(false);
         logout();
+        setOpen(true);
     };
 
     const guestLinks = () => (
@@ -68,6 +63,24 @@ const Navbar = ({ logout, isAuthenticated }) => {
             <Button
                 onClick={() => setDr(true)}
                 color="inherit"
+                sx={{
+                    marginLeft: "auto",
+                    border: "2px solid #DC4C64",
+                    fontFamily: "gongo",
+                    fontSize: 20,
+                    paddingLeft: "13px",
+                    paddingRight: "10px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    transition: "all 0.2s ease-in-out",
+                    boxShadow: "none",
+                    "&:hover": {
+                        boxShadow: "0px 0px 10px rgba(255,255,255,0.7)",
+                        transform: "scale(1.05)",
+                        backgroundColor: "transparent",
+                    },
+                }}
                 style={{
                     transform: hover ? "scale(1.1)" : "scale(1)",
                     boxShadow: hover ? "0px 0px 10px rgba(255,255,255,0.7)" : "none"
@@ -92,7 +105,28 @@ const Navbar = ({ logout, isAuthenticated }) => {
 
     const authLinks = () => (
         <Fragment>
-            <Button onClick={logoutHandler} color="inherit" className={classes.loginButton}>
+            <Button onClick={logoutHandler} color="inherit" sx={{
+                marginLeft: "auto",
+                border: "2px solid #DC4C64",
+                fontFamily: "gongo",
+                fontSize: 20,
+                paddingLeft: "13px",
+                paddingRight: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                transition: "all 0.2s ease-in-out",
+                boxShadow: "none",
+                "&:hover": {
+                    boxShadow: "0px 0px 10px rgba(255,255,255,0.7)",
+                    transform: "scale(1.05)",
+                    backgroundColor: "transparent",
+                },
+            }}
+                style={{
+                    transform: hover ? "scale(1.1)" : "scale(1)",
+                    boxShadow: hover ? "0px 0px 10px rgba(255,255,255,0.7)" : "none"
+                }}>
                 <div className={'icon'}>
                     <AccountSvg width="22" height="22" />
                 </div>
@@ -103,6 +137,11 @@ const Navbar = ({ logout, isAuthenticated }) => {
 
     return (
         <AppBar position="static" className={classes.appBar}>
+            <Snackbar open={open} autoHideDuration={6000} onClose={() => setOpen(false)} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                <Alert onClose={() => setOpen(false)} severity={'success'} sx={{ width: '100%' }}>
+                    You logged out successfully
+                </Alert>
+            </Snackbar>
             <Toolbar justifyсontent="space-between">
                 <Link variant="h6" className={classes.title} to="/">
                     <b>Wroclaw Cinema</b>

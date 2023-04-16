@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, SvgIcon } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { AppBar, Toolbar, Typography, Button, SvgIcon } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import '../../static/frontend/index.css';
 import PopcornSvg from '../../static/frontend/svg/popcorn.svg';
 import CinemaSvg from '../../static/frontend/svg/cinema.svg';
@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
     },
     button: {
         marginLeft: theme.spacing(2),
-        fontFamily: 'gongo',
         fontSize: 18,
         color: '#ffffff',
         textDecoration: 'none',

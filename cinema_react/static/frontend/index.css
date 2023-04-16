@@ -40,3 +40,12 @@ div {
 #app{
     padding-top: 100px;
 } 
+
+.full-width-button {
+    width: 50%;
+    height: 60px;
+    box-sizing: border-box;
+    padding: 15px 0;
+    font-size: 16px;
+    text-transform: uppercase;
+}

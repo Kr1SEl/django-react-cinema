@@ -31,7 +31,8 @@ def create__moviesession(token):
         'Content-Type': 'application/json'
     }
     response = requests.request("POST", url, headers=headers, data=payload)
-    return response.json()
+    print(response)
+    return response
 
 
 if __name__ == '__main__':
