@@ -6,7 +6,6 @@ import store from './Store'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { red, deepPurple, lightBlue, green, amber, grey } from '@mui/material/colors';
 
-
 const theme = createTheme({
   palette: {
     primary: {
