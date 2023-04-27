@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import AdditionalNavbar from '../../components/AdditionalNavbar'
+import AdditionalNavbar from '../../components/AdditionalNavbar';
 import { getMovies } from "../../actions/api";
 import {
-  Grid
+  Grid,
+  Container,
+  Box
 } from '@mui/material';
 import { useHistory } from "react-router-dom";
 
-import "./../../components/styles.css"
+import "./../../components/styles.css";
 
 const HomePage = () => {
-
   const history = useHistory();
 
   const handleMovieClick = (id) => {
@@ -20,17 +21,19 @@ const HomePage = () => {
 
   useEffect(async () => {
     const movies = await getMovies();
-    setData(movies)
+    setData(movies);
   }, []);
 
   if (!data) {
     return (
       <div>
         <AdditionalNavbar />
-        <Grid container spacing={1}>
-          <h1>Home Page</h1>
-          <p>Loading...</p>
-        </Grid>
+        <Container>
+          <Box>
+            <h1>Home Page</h1>
+            <p>Loading...</p>
+          </Box>
+        </Container>
       </div>
     );
   } else {
@@ -38,18 +41,25 @@ const HomePage = () => {
       <div>
         <AdditionalNavbar />
         <h1>Home Page</h1>
-        {data.map((movie) => (
-          <div key={movie.id} className="container">
-            <a href="#" onClick={() => handleMovieClick(movie.id)}>
-              <img className="image" src={`data:image/jpeg;base64,${movie.poster}`} alt={movie.name} />
-              <div className="middle">
-                <div className="text">More Info</div>
-              </div>
-              <p className="refText">{movie.name}</p>
-            </a>
-          </div>
-        ))
-        }
+        <Container>
+          <Box>
+            <Grid container spacing={2}>
+              {data.map((movie) => (
+                <Grid item xs={12} sm={4} key={movie.id}>
+                  <div className="container">
+                    <a href="#" onClick={() => handleMovieClick(movie.id)}>
+                      <img className="image" src={`data:image/jpeg;base64,${movie.poster}`} alt={movie.name} />
+                      <div className="middle">
+                        <div className="text">More Info</div>
+                      </div>
+                      <p className="refText">{movie.name}</p>
+                    </a>
+                  </div>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </Container>
       </div >
     );
   }

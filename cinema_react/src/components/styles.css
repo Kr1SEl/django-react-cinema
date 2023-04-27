@@ -1,6 +1,6 @@
 .container {
     position: relative;
-    width: 20%;
+    width: 83%;
 }
 
 .image {
@@ -64,4 +64,20 @@
 
 .buttonMain:hover::before {
     transform: scaleX(1);
+}
+
+.tableCell {
+    border: 1px solid;
+    border-collapse: collapse;
+    border-color: white;
+}
+
+.tableText {
+    color: #ffffff;
+}
+
+.tableSessions {
+    background-color: black;
+    border-collapse: collapse;
+    border-radius: 0%;
 }

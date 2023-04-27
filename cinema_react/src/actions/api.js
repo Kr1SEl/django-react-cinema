@@ -29,3 +29,18 @@ export const getMovieById = async (id) => {
         throw new Error('503 - Django server is down');
     }
 };
+
+export const getSessionsByMovieId = async (id) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
+        const res = await axios.get(`/api/v1/movie-session/${id}/`, config);
+        return res.data;
+    } catch (err) {
+        throw new Error('503 - Django server is down');
+    }
+};
