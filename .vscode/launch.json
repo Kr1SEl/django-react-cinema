@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-ValidationApplication<validation>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.example.validation.ValidationApplication",
+      "projectName": "validation",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}

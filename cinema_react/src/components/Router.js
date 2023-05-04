@@ -4,6 +4,7 @@ import MoviePage from '../containers/App/MoviePage';
 import ActivationPage from '../containers/Auth/ActivationPage';
 import TicketsPage from '../containers/App/TicketsPage';
 import PromosPage from '../containers/App/PromosPage';
+import SeatPickerPage from '../containers/App/SeatPickerPage';
 import ResetPasswordConfirmationPage from '../containers/Auth/ResetPasswordConfirmationPage';
 import ResetPasswordPage from '../containers/Auth/ResetPasswordPage';
 import SignUpPage from '../containers/Auth/SignUpPage';
@@ -21,6 +22,7 @@ const CinemaRouter = () => (
         <Route exact path="/password/reset/confirm/:uid/:token" component={ResetPasswordConfirmationPage} />
         <Route exact path="/activate/:uid/:token" component={ActivationPage} />
         <Route exact path="/movies" component={MovieListPage} />
+        <Route exact path="/movie/seats/:sessionID" component={SeatPickerPage} />
         <Route exact path="/tickets" component={TicketsPage} />
         <Route exact path="/promos" component={PromosPage} />
         <Route exact path="/movie/:movieID" component={MoviePage} />
