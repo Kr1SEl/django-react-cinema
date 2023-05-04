@@ -1,3 +1,5 @@
+import json
+from django.http import HttpRequest
 from rest_framework import viewsets, authentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
@@ -9,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from datetime import datetime
+import requests
 from .models import Movie, Hall, MovieSession, Genre
 from .serializers import MovieSerializer, HallSerializer, MovieSessionSerializer, GenreSerializer
 
@@ -37,22 +40,6 @@ class MovieAPIView(APIView):
             return Response(serializer.data)
 
 
-# def post(self, request):
-#     exch = Exchange.objects.get(id=request.data['exchange'])
-#     if len(Credentials.objects.filter(user=request.user, exchange=exch)) == 0:
-#         return Response(CredentialsSerializer(newCredentials).data)
-#     else:
-#         return JsonResponse({'error': 'Credentials exist'}, status=400)
-
-# def delete(self, request, pk, format=None):
-#     credential = Credentials.objects.filter(
-#         user=request.user, exchange_id=pk)
-#     if len(credential) > 0:
-#         return JsonResponse({'message': 'Success'}, status=200)
-#     else:
-#         return JsonResponse({'error': 'Wrong credentials ID'}, status=400)
-
-
 class HallAPIView(APIView):
     def get(self, request, pk=None):
         if pk:
@@ -63,29 +50,37 @@ class HallAPIView(APIView):
             serializer = HallSerializer(halls, many=True)
             return Response(serializer.data)
 
-    # def post(self, request):
-    #     exch = Exchange.objects.get(id=request.data['exchange'])
-    #     if len(Credentials.objects.filter(user=request.user, exchange=exch)) == 0:
-    #         return Response(CredentialsSerializer(newCredentials).data)
-    #     else:
-    #         return JsonResponse({'error': 'Credentials exist'}, status=400)
-
-    # def delete(self, request, pk, format=None):
-    #     credential = Credentials.objects.filter(
-    #         user=request.user, exchange_id=pk)
-    #     if len(credential) > 0:
-    #         return JsonResponse({'message': 'Success'}, status=200)
-    #     else:
-    #         return JsonResponse({'error': 'Wrong credentials ID'}, status=400)
-
 
 class MovieSessionAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     # permission_classes = (IsAuthenticated,)
 
-    def get(self, request, movie_id=None):
-        session = MovieSession.objects.filter(movie_id=movie_id).values()
-        return Response(session)
+    def get(self, request, pk=None):
+        if request.path == f'/api/v1/movie-session/{pk}/':
+            session = MovieSession.objects.filter(movie_id=pk).values()
+            return Response(session)
+        else:
+            if pk != None:
+                session = MovieSession.objects.get(id=pk)
+                movie = session.movie_id
+                hall = session.hall_id
+                url = f"http://localhost:8080/tickets/tickets/session/{pk}"
+                payload = {}
+                headers = {}
+                response = requests.request(
+                    "GET", url, headers=headers, data=payload)
+                res = []
+                for occupied in response.json():
+                    res.append(int(occupied['seat']))
+                return JsonResponse({
+                    'name': movie.name,
+                    'start_time': session.starting_time,
+                    'sits_layout': hall.sits_layout,
+                    'hall_number': hall.hall_number,
+                    'price': float(session.ticket_price),
+                    'occupied': res}, status=200)
+            else:
+                return JsonResponse({'error': 'Request not found'}, status=404)
 
     def post(self, request, movie_id=None):
         if movie_id:
@@ -98,15 +93,42 @@ class MovieSessionAPIView(APIView):
             tz_aware_time = timezone.make_aware(
                 starting_datetime, timezone.get_current_timezone())
             new_session = MovieSession.objects.create(
-                movie_id=movie, hall_id=hall, starting_time=tz_aware_time)
+                movie_id=movie, hall_id=hall, starting_time=tz_aware_time, ticket_price=request.data['ticket_price'])
             return JsonResponse(MovieSessionSerializer(new_session).data, status=200)
         else:
             return JsonResponse({'error': 'You are not a superuser'}, status=401)
 
-    # def delete(self, request, pk, format=None):
-    #     credential = Credentials.objects.filter(
-    #         user=request.user, exchange_id=pk)
-    #     if len(credential) > 0:
-    #         return JsonResponse({'message': 'Success'}, status=200)
-    #     else:
-    #         return JsonResponse({'error': 'Wrong credentials ID'}, status=400)
+
+class SeatsAPIView(APIView):
+    def get(self, request, pk=None):
+        if pk:
+            url = f"http://localhost:8080/tickets/tickets/session/{pk}"
+            payload = {}
+            headers = {}
+            response = requests.request(
+                "GET", url, headers=headers, data=payload)
+            print(response.status_code)
+            return JsonResponse(response.json(), status=response.status_code, safe=False)
+        else:
+            return JsonResponse({'error': 'Request not found'}, status=404)
+
+    def post(self, request, pk=None):
+        url = "http://localhost:8080/tickets/tickets"
+        payload = json.dumps({
+            "hall": request.data['hall'],
+            "dateTime": request.data['dateTime'],
+            "seat": request.data['seat'],
+            "price": request.data['price'],
+            "telephoneNumber": request.data['telephoneNumber'],
+            "name": request.data['name'],
+            "surname": request.data['surname'],
+            "email": request.data['email'],
+            "filmName": request.data['filmName'],
+            "additionalServices": request.data['additionalServices'],
+            "sessionId": request.data['sessionId']
+        })
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+        return JsonResponse(response.json(), status=response.status_code)

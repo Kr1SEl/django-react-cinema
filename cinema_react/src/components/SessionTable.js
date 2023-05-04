@@ -13,7 +13,7 @@ const SessionTable = ({ movieId }) => {
     const [sessions, setSessions] = useState([])
 
     const handleSessionClick = (id) => {
-        history.push(`/tickets`);
+        history.push(`/movie/seats/${id}`);
     };
 
     const handleBackClick = () => {

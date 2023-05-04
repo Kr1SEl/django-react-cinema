@@ -1,28 +1,14 @@
 import '../../../static/frontend/index.css';
-import React, { useState } from 'react'
-import clsx from 'clsx'
+import React, { useState, useEffect } from 'react';
+import clsx from 'clsx';
+import { getMovieInfoBySessionId } from "../../actions/api";
 
 const movies = [
     {
-        name: 'Avenger',
-        price: 10,
+        name: 'Loading',
+        price: 0,
         occupied: [20, 21, 30, 1, 2, 8],
-    },
-    {
-        name: 'Joker',
-        price: 12,
-        occupied: [9, 41, 35, 11, 65, 26],
-    },
-    {
-        name: 'Toy story',
-        price: 8,
-        occupied: [37, 25, 44, 13, 2, 3],
-    },
-    {
-        name: 'the lion king',
-        price: 9,
-        occupied: [10, 12, 50, 33, 28, 47],
-    },
+    }
 ]
 
 const seats = Array.from({ length: 8 * 8 }, (_, i) => i)
@@ -30,6 +16,11 @@ const seats = Array.from({ length: 8 * 8 }, (_, i) => i)
 const SeatPickerPage = ({ match }) => {
     const [selectedMovie, setSelectedMovie] = useState(movies[0])
     const [selectedSeats, setSelectedSeats] = useState([])
+
+    useEffect(async () => {
+        const movie = await getMovieInfoBySessionId(match.params.sessionID);
+        setSelectedMovie(movie);
+    }, []);
 
     return (
         <div className="App">

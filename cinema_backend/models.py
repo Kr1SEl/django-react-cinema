@@ -44,6 +44,7 @@ class MovieSession(models.Model):
     hall_id = models.ForeignKey(
         Hall, on_delete=models.CASCADE, null=False, blank=False)
     starting_time = models.DateTimeField(null=False, blank=False)
+    ticket_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f'Movie Name: {self.movie_id.name}, Hall ID: {self.hall_id.id}, Starting Time: {self.starting_time}'
