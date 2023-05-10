@@ -1,68 +1,106 @@
-import React, { useState, useEffect } from "react";
-import AdditionalNavbar from '../../components/AdditionalNavbar';
-import { getMovies } from "../../actions/api";
+import React from 'react';
+import Map from './Map';
+import { makeStyles } from '@mui/styles';
 import {
-  Grid,
+  AppBar,
+  Toolbar,
+  Typography,
   Container,
-  Box
+  Grid,
+  Card,
+  CardContent,
+  CardMedia,
+  CardActions,
+  IconButton,
+  Button,
+  Box,
 } from '@mui/material';
-import { useHistory } from "react-router-dom";
+import { PlayArrow } from '@mui/icons-material';
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import AdditionalNavbar from '../../components/AdditionalNavbar';
 
-import "./../../components/styles.css";
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+    padding: '50px',
+    background: 'linear-gradient(to top, #343434, #000000 15%, #000000 100%)',
+    height: '66vh',
+  },
+  title: {
+    flexGrow: 1,
+  },
+  carousel: {
+    width: '100%',
+    height: '500px',
+    position: 'relative',
+    '& .carousel-slider': {
+      display: 'flex',
+      alignItems: 'center',
+    },
+  },
+  carouselImgContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  carouselImg: {
+    maxHeight: '500px',
+    maxWidth: '100%',
+    objectFit: 'contain',
+  },
+}));
 
-const HomePage = () => {
-  const history = useHistory();
+const img1 = require('../../assets/cinema_hall.jpg').default;
+const img2 = require('../../assets/relux.jpg').default;
+const img3 = require('../../assets/vip_cinema_hall.jpg').default;
+const img4 = require('../../assets/4dx.png').default;
 
-  const handleMovieClick = (id) => {
-    history.push(`/movie/${id}`);
-  };
+const images = [
+  { img: img1 },
+  { img: img2 },
+  { img: img3 },
+  { img: img4 },
+];
 
-  const [data, setData] = useState(null);
+function HomePage() {
+  const classes = useStyles();
+  const location = [51.089666308, 17.017166598];
 
-  useEffect(async () => {
-    const movies = await getMovies();
-    setData(movies);
-  }, []);
-
-  if (!data) {
-    return (
-      <div>
-        <AdditionalNavbar />
-        <Container>
-          <Box>
-            <h1>Home Page</h1>
-            <p>Loading...</p>
-          </Box>
-        </Container>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <AdditionalNavbar />
-        <h1>Home Page</h1>
-        <Container>
-          <Box>
-            <Grid container spacing={2}>
-              {data.map((movie) => (
-                <Grid item xs={12} sm={4} key={movie.id}>
-                  <div className="container">
-                    <a href="#" onClick={() => handleMovieClick(movie.id)}>
-                      <img className="image" src={`data:image/jpeg;base64,${movie.poster}`} alt={movie.name} />
-                      <div className="middle">
-                        <div className="text">More Info</div>
-                      </div>
-                      <p className="refText">{movie.name}</p>
-                    </a>
-                  </div>
-                </Grid>
+  return (
+    <div>
+      <AdditionalNavbar />
+      <Typography className='neonText'>
+        <b>Welcome to the cinema</b>
+      </Typography>
+      <div className={classes.root}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6} lg={6} xl={6}>
+            <Carousel
+              className={classes.carousel}
+              showThumbs={false}
+              showStatus={false}
+              showIndicators={false}
+              infiniteLoop
+              autoPlay
+              interval={3000}
+            >
+              {images.slice(0, 4).map((image, index) => (
+                <Box key={index} className={classes.carouselImgContainer}>
+                  <img className={classes.carouselImg} src={image.img} />
+                </Box>
               ))}
-            </Grid>
-          </Box>
-        </Container>
-      </div >
-    );
-  }
+            </Carousel>
+          </Grid>
+          <Grid item xs={12} md={6} lg={6} xl={6}>
+            <Map location={location} />
+          </Grid>
+        </Grid>
+      </div>
+    </div >
+  );
 };
 
 export default HomePage;

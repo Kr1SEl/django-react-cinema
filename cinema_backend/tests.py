@@ -1,3 +1,5 @@
-from django.test import TestCase
+import requests
+import random
 
-# Create your tests here.
+for i in range(100):
+    print(random.randint(1, 3))

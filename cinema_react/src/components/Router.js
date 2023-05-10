@@ -7,6 +7,8 @@ import PromosPage from '../containers/App/PromosPage';
 import SeatPickerPage from '../containers/App/SeatPickerPage';
 import ResetPasswordConfirmationPage from '../containers/Auth/ResetPasswordConfirmationPage';
 import ResetPasswordPage from '../containers/Auth/ResetPasswordPage';
+import AnonymousForm from '../containers/App/AnonymousForm';
+import TestPage from '../containers/App/TestPage';
 import SignUpPage from '../containers/Auth/SignUpPage';
 import React, { Component } from "react";
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
@@ -23,9 +25,11 @@ const CinemaRouter = () => (
         <Route exact path="/activate/:uid/:token" component={ActivationPage} />
         <Route exact path="/movies" component={MovieListPage} />
         <Route exact path="/movie/seats/:sessionID" component={SeatPickerPage} />
+        <Route exact path="/movie/seats-reservation-form" component={AnonymousForm} />
         <Route exact path="/tickets" component={TicketsPage} />
         <Route exact path="/promos" component={PromosPage} />
         <Route exact path="/movie/:movieID" component={MoviePage} />
+        <Route exact path="/test" component={TestPage} />
       </Switch>
     </Layout>
   </Router>

@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from datetime import timedelta
 
 
 class Genre(models.Model):
@@ -48,3 +50,24 @@ class MovieSession(models.Model):
 
     def __str__(self):
         return f'Movie Name: {self.movie_id.name}, Hall ID: {self.hall_id.id}, Starting Time: {self.starting_time}'
+
+    def save(self, *args, **kwargs):
+        overlapping_sessions = MovieSession.objects.filter(
+            hall_id=self.hall_id,
+            starting_time__range=(
+                self.starting_time - timedelta(hours=3), self.starting_time + timedelta(hours=3))
+        ).exclude(id=self.id)
+        if overlapping_sessions.exists():
+            raise ValidationError(
+                "There is already a session in the same hall within 3 hours.")
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        overlapping_sessions = MovieSession.objects.filter(
+            hall_id=self.hall_id,
+            starting_time__range=(
+                self.starting_time - timedelta(hours=3), self.starting_time + timedelta(hours=3))
+        ).exclude(id=self.id)
+        if overlapping_sessions.exists():
+            raise ValidationError(
+                "There is already a session in the same hall within 3 hours.")

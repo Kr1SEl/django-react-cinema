@@ -32,7 +32,7 @@ export const login = (email, password) => async dispatch => {
             payload: res.data
         });
 
-        dispatch(load_user());
+        // dispatch(load_user());
         return true;
     } catch (err) {
         dispatch({
@@ -95,7 +95,7 @@ export const load_user = () => async dispatch => {
         const config = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
+                'Authorization': `Bearer ${localStorage.getItem('access')}`,
                 'Accept': 'application/json'
             }
         };
@@ -106,7 +106,7 @@ export const load_user = () => async dispatch => {
                 type: LOAD_USER_SUCCESS,
                 payload: res.data
             });
-            dispatch(load_user());
+            // dispatch(load_user());
         } catch (err) {
             dispatch({
                 type: LOAD_USER_FAIL

@@ -1,5 +1,10 @@
 import json
+import requests
+import base64
+from .helper import image_file_to_base64
+from .sender import send_email, get_qr_code
 from django.http import HttpRequest
+from django.utils import timezone
 from rest_framework import viewsets, authentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.views import APIView
@@ -10,8 +15,7 @@ from rest_framework.decorators import permission_classes
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
-from datetime import datetime
-import requests
+from datetime import datetime, timedelta
 from .models import Movie, Hall, MovieSession, Genre
 from .serializers import MovieSerializer, HallSerializer, MovieSessionSerializer, GenreSerializer
 
@@ -61,7 +65,23 @@ class MovieSessionAPIView(APIView):
             return Response(session)
         else:
             if pk != None:
-                session = MovieSession.objects.get(id=pk)
+                session = MovieSession.objects.filter(id=pk)
+                if len(session) == 0:
+                    return JsonResponse({'name': None,
+                                         'start_time': None,
+                                         'sits_layout': 1,
+                                         'hall_number': None,
+                                         'price': 0,
+                                         'occupied': []}, status=200)
+                session = session[0]
+                current_datetime = timezone.now()
+                if session.starting_time < current_datetime:
+                    return JsonResponse({'name': None,
+                                         'start_time': None,
+                                         'sits_layout': 1,
+                                         'hall_number': None,
+                                         'price': 0,
+                                         'occupied': []}, status=200)
                 movie = session.movie_id
                 hall = session.hall_id
                 url = f"http://localhost:8080/tickets/tickets/session/{pk}"
@@ -92,9 +112,12 @@ class MovieSessionAPIView(APIView):
                 f"{request.data['starting_date']} {request.data['starting_time']}", '%Y-%m-%d %H:%M:%S')
             tz_aware_time = timezone.make_aware(
                 starting_datetime, timezone.get_current_timezone())
-            new_session = MovieSession.objects.create(
-                movie_id=movie, hall_id=hall, starting_time=tz_aware_time, ticket_price=request.data['ticket_price'])
-            return JsonResponse(MovieSessionSerializer(new_session).data, status=200)
+            try:
+                new_session = MovieSession.objects.create(
+                    movie_id=movie, hall_id=hall, starting_time=tz_aware_time, ticket_price=request.data['ticket_price'])
+                return JsonResponse(MovieSessionSerializer(new_session).data, status=200)
+            except:
+                return JsonResponse({'bad request': 'There is already a session in the same hall within 3 hours.'}, status=400)
         else:
             return JsonResponse({'error': 'You are not a superuser'}, status=401)
 
@@ -107,7 +130,6 @@ class SeatsAPIView(APIView):
             headers = {}
             response = requests.request(
                 "GET", url, headers=headers, data=payload)
-            print(response.status_code)
             return JsonResponse(response.json(), status=response.status_code, safe=False)
         else:
             return JsonResponse({'error': 'Request not found'}, status=404)
@@ -131,4 +153,32 @@ class SeatsAPIView(APIView):
             'Content-Type': 'application/json'
         }
         response = requests.request("POST", url, headers=headers, data=payload)
+        if response.status_code == 201:
+            send_email(request.data['email'],
+                       request.data['filmName'], request.data['seat'], request.data['dateTime'], response.json()['id'])
         return JsonResponse(response.json(), status=response.status_code)
+
+
+class TicketsAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        url = f"http://localhost:8080/tickets/tickets/email/{request.user}"
+        payload = {}
+        headers = {}
+        response = requests.request(
+            "GET", url, headers=headers, data=payload)
+        res = []
+        for ticket in response.json():
+            datetime_obj = datetime.strptime(
+                ticket['dateTime'], '%Y-%m-%dT%H:%M:%S')
+            current_datetime = datetime.now()
+            future_datetime = current_datetime - timedelta(hours=2)
+            if datetime_obj > future_datetime:
+                image = Movie.objects.get(name=ticket['filmName']).poster
+                res.append({'movie_name': ticket['filmName'],
+                            'start_time': ticket['dateTime'],
+                            'qr_code': base64.b64encode(get_qr_code(ticket['id'])).decode('utf-8'),
+                            'poster': image_file_to_base64(image)})
+        return JsonResponse(res, status=response.status_code, safe=False)

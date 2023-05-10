@@ -1,4 +1,5 @@
 import React, { useState, Fragment } from 'react';
+import { NavLink } from 'react-router-dom';
 import {
     AppBar,
     Toolbar,
@@ -36,7 +37,10 @@ const useStyles = makeStyles((theme) => ({
         fontFamily: 'gongo',
         fontSize: 20,
         color: '#ffffff',
-        textDecoration: 'none'
+        textDecoration: 'none',
+        '&:hover': {
+            color: '#DC4C64 !important',
+        },
     },
     spacer: {
         flexGrow: 1,
@@ -51,6 +55,7 @@ const Navbar = ({ logout, isAuthenticated }) => {
     const [hover, setHover] = useState(false);
     const [dr, setDr] = useState(false);
     const [open, setOpen] = useState(false);
+    const [activeLink, setActiveLink] = useState(null);
 
     const logoutHandler = () => {
         setDr(false);
@@ -144,41 +149,47 @@ const Navbar = ({ logout, isAuthenticated }) => {
             </Snackbar>
             <Toolbar justifyсontent="space-between">
                 <Link variant="h6" className={classes.title} to="/">
-                    <b>Wroclaw Cinema</b>
+                    <b><span style={{ color: '#DC4C64' }}>Wroclaw</span> Cinema</b>
                 </Link>
                 <div>
-                    <Link
+                    <NavLink
+                        style={isActive => ({
+                            color: isActive ? "#DC4C64" : "white"
+                        })}
                         color="inherit"
-                        underline="none"
                         className={classes.button}
                         to="/movies"
-                        onMouseEnter={(e) => (e.target.style.color = "#DC4C64")}
-                        onMouseLeave={(e) => (e.target.style.color = "white")}
+                        underline="none"
                     >
                         <b>SCHEDULE</b>
-                    </Link>
-                    <Link
-                        color="inherit"
-                        className={classes.button}
-                        to="/tickets"
-                        underline="none"
-                        onMouseEnter={(e) => (e.target.style.color = "#DC4C64")}
-                        onMouseLeave={(e) => (e.target.style.color = "white")}>
-                        <b>MY TICKETS</b>
-                    </Link>
-                    <Link
+                    </NavLink>
+                    {isAuthenticated && (
+                        <NavLink
+                            style={isActive => ({
+                                color: isActive ? "#DC4C64" : "white"
+                            })}
+                            color="inherit"
+                            className={classes.button}
+                            to="/tickets"
+                            underline="none"
+                        >
+                            <b>MY TICKETS</b>
+                        </NavLink>
+                    )}
+                    <NavLink
+                        style={isActive => ({
+                            color: isActive ? "#DC4C64" : "white"
+                        })}
                         to="/promos"
                         color="inherit"
                         underline="none"
-                        className={classes.button}
-                        onMouseEnter={(e) => (e.target.style.color = "#DC4C64")}
-                        onMouseLeave={(e) => (e.target.style.color = "white")}>
+                        className={classes.button}>
                         <b>PROMOS</b>
-                    </Link>
+                    </NavLink>
                 </div>
                 <div className={classes.spacer} />
                 {isAuthenticated ? authLinks() : guestLinks()}
-            </Toolbar>
+            </Toolbar >
         </AppBar >
     );
 };

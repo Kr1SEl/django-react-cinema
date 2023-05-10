@@ -74,3 +74,65 @@ export const getMovieInfoBySessionId = async (id) => {
         throw new Error('503 - Django server is down');
     }
 };
+
+
+export const postTicketForSessionId = async (movie, user_name, user_surname, user_email, user_phone, seat, sessionID, price) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    const parseAndFormatDate = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+    };
+
+    const formattedDate = parseAndFormatDate(movie.start_time);
+    try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
+        const body = JSON.stringify({
+            "hall": movie.hall_number,
+            "dateTime": formattedDate,
+            "seat": seat,
+            "price": price,
+            "telephoneNumber": user_phone,
+            "name": user_name,
+            "surname": user_surname,
+            "email": user_email,
+            "filmName": movie.name,
+            "additionalServices": "",
+            "sessionId": sessionID
+        });
+        const res = await axios.post(`/api/v1/movie-seats/`, body, config);
+        return true;
+    } catch (err) {
+        throw new Error('503 - Django server is down');
+        return false;
+    }
+};
+
+export const getTicketsForUser = async () => {
+    if (localStorage.getItem('access')) {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            }
+        };
+        try {
+            axios.defaults.baseURL = 'http://127.0.0.1:8000'
+            const res = await axios.get(`api/v1/movie-tickets/`, config);
+            return res.data;
+        } catch (err) {
+            throw new Error('503 - Django server is down');
+        }
+    } else {
+        return [];
+    }
+};
