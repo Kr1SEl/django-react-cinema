@@ -1,10 +1,9 @@
 import { useHistory } from "react-router-dom";
 import {
-    Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TableFooter
+    Button, Box, Container
 } from '@mui/material';
 import { getSessionsByMovieId } from "../actions/api";
 import React, { useState, useEffect } from "react";
-
 
 const SessionTable = ({ movieId }) => {
 
@@ -27,90 +26,45 @@ const SessionTable = ({ movieId }) => {
     };
 
     useEffect(async () => {
-        const sessions = await getSessionsByMovieId(movieId);
-        setSessions(sessions);
+        const sessionData = await getSessionsByMovieId(movieId);
+        const sortedSessions = sessionData.sort((a, b) => new Date(a.starting_time) - new Date(b.starting_time));
+        setSessions(sortedSessions);
     }, []);
 
+    const sessionsByDate = sessions.reduce((acc, session) => {
+        if (isSessionValid(session.starting_time)) {
+            const date = new Date(session.starting_time).toLocaleDateString();
+            if (!acc[date]) acc[date] = [];
+            acc[date].push(session);
+        }
+        return acc;
+    }, {});
+
     return (
-        <div>
-            <TableContainer component={Paper}>
-                <Table className="tableSessions">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center" className="tableCell">
-                                <div className="tableText">
-                                    Upcoming Sessions
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                </Table>
-            </TableContainer>
-            <TableContainer component={Paper}>
-                <Table className="tableSessions">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell className="tableCell">
-                                <div className="tableText">
-                                    Date and Time
-                                </div>
-                            </TableCell>
-                            <TableCell align="center" className="tableCell">
-                                <div className="tableText">
-                                    Hall Number
-                                </div>
-                            </TableCell>
-                            <TableCell align="center" className="tableCell">
-                                <div className="tableText">
-                                    Action
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {sessions.map(
-                            (session) =>
-                                isSessionValid(session.starting_time) && (
-                                    <TableRow key={session.id}>
-                                        <TableCell className="tableCell">
-                                            <div className="tableText">
-                                                {new Date(session.starting_time).toLocaleString()}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="center" className="tableCell">
-                                            <div className="tableText">
-                                                {session.hall_id_id}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="center" className="tableCell">
-                                            <div className="tableText">
-                                                <Button className="buttonMain" onClick={() => handleSessionClick(session.id)}>
-                                                    Select
-                                                </Button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                )
+        <>
+            <h2>Upcoming Sessions</h2>
+            {Object.entries(sessionsByDate).map(([date, sessionGroup]) =>
+                <Box key={date}>
+                    <h2>{date}</h2>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+                        {sessionGroup.map((session) =>
+                            <Button
+                                key={session.id}
+                                variant="outlined"
+                                onClick={() => handleSessionClick(session.id)}
+                            >
+                                {new Date(session.starting_time).toLocaleTimeString()}
+                            </Button>
                         )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TableContainer component={Paper}>
-                <Table className="tableSessions">
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell className="tableCell">
-                                <div className="tableText">
-                                    <Button className="buttonMain" onClick={() => handleBackClick()}>Back</Button>
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>
-                </Table>
-            </TableContainer>
-        </div>
+                    </Box>
+                </Box>
+            )}
+            <br />
+            <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+                <Button variant="outlined" onClick={handleBackClick}>Back</Button>
+            </Box>
+        </>
     )
 }
-
 
 export default SessionTable;
