@@ -84,10 +84,10 @@ const Signup = ({ signup, isAuthenticated }) => {
                         Invalid email or password. Please try again.
                     </Typography>
                 )}
-                <Typography variant='h4' align='center' gutterBottom>
-                    Sign Up
+                <Typography variant='h4' align='center' fontFamily={'rajdhani'} gutterBottom>
+                    <b>Sign Up</b>
                 </Typography>
-                <Typography variant='body1' align='center'>
+                <Typography variant='body1' align='center' fontFamily={'rajdhani'} >
                     Create an account
                 </Typography>
                 <form onSubmit={onSubmit}>

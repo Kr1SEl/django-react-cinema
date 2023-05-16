@@ -25,7 +25,7 @@ def create__moviesession(token, start_time, hall_id):
     print(start_time)
     url = "http://127.0.0.1:8000/api/v1/movie-session/"
     movie = random.randint(1, 3)
-    price = random.randint(50, 90)
+    price = random.randint(10, 50)
     payload = json.dumps({
         "movie_id": movie,
         "hall_number": hall_id,

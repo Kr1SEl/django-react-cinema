@@ -49,6 +49,9 @@ const SeatPickerPage = ({ match, isAuthenticated, user }) => {
     const [selectedLayout, setSelectedLayout] = useState([])
     const [layoutArray, selLayoutArrat] = useState([])
     const [isDataLoading, setIsDataLoading] = useState(true)
+    const date = new Date();
+    const dayOfWeek = date.getDay();
+
 
     useEffect(async () => {
         const movie = await getMovieInfoBySessionId(match.params.sessionID);
@@ -100,11 +103,25 @@ const SeatPickerPage = ({ match, isAuthenticated, user }) => {
                         You have selected <span className="count">{selectedSeats.length}</span>{' '}
                         seats with the total price of{' '}
                         <span className="total">
-                            {(selectedSeats.length * selectedMovie.price) * 0.8}PLN
+                            {((selectedSeats.length * selectedMovie.price) * 0.8).toFixed(2)}PLN
                         </span>
                     </p>
                     <p className="info">
                         Total discount of <span className="count">20%</span> applied
+                    </p>
+                </div>
+            )}
+            {selectedMovie && selectedSeats.length > 0 && selectedSeats.length < 3 && isAuthenticated && dayOfWeek >= 1 && dayOfWeek <= 4 && (
+                <div>
+                    <p className="info">
+                        You have selected <span className="count">{selectedSeats.length}</span>{' '}
+                        seats with the total price of{' '}
+                        <span className="total">
+                            {((selectedSeats.length * selectedMovie.price) * 0.85).toFixed(2)}PLN
+                        </span>
+                    </p>
+                    <p className="info">
+                        Total discount of <span className="count">15%</span> applied
                     </p>
                 </div>
             )}

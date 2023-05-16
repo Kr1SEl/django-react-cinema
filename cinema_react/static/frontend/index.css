@@ -9,6 +9,17 @@
     font-weight: bold;
 }
 
+@font-face {
+    font-family: 'rajdhani';
+    src: url('./Rajdhani-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'rajdhani';
+    src: url('./Rajdhani-Bold.ttf');
+    font-weight: bold;
+}
+
 div {
     padding: 0px;
 }

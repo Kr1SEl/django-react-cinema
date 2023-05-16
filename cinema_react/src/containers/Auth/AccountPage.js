@@ -33,7 +33,7 @@ const Account = () => {
             <LoginPage />
             <Grid container justifyContent='space-between'>
                 <Grid item>
-                    <Typography variant='body2' style={{ marginLeft: '15px' }}>
+                    <Typography variant='body2' style={{ marginLeft: '15px', marginTop: '10px' }} fontFamily={'rajdhani'} fontSize={'16px'} >
                         Forgot your password?{' '}
                         <Button
                             variant="text"

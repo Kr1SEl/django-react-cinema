@@ -65,10 +65,10 @@ const Login = ({ login, isAuthenticated }) => {
             }
             <br />
             <div className='mt-5'>
-                <Typography variant='h4' align='center' gutterBottom>
-                    Sign In
+                <Typography variant='h4' align='center' fontFamily={'rajdhani'} gutterBottom>
+                    <b>Sign In</b>
                 </Typography>
-                <Typography variant='body1' align='center'>
+                <Typography variant='body1' align='center' fontFamily={'rajdhani'} >
                     Sign into your Account
                 </Typography>
                 <form onSubmit={onSubmit}>

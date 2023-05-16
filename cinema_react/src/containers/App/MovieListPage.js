@@ -8,7 +8,6 @@ import {
 } from '@mui/material';
 import { useHistory } from "react-router-dom";
 import '../../../static/frontend/index.css';
-
 import "./../../components/styles.css";
 
 const MovieListPage = () => {
@@ -51,7 +50,7 @@ const MovieListPage = () => {
                       <div className="middle">
                         <div className="text">More Info</div>
                       </div>
-                      <p className="refText">{movie.name}</p>
+                      <p className="refText" style={{ fontFamily: 'rajdhani' }}>{movie.name}</p>
                     </a>
                   </div>
                 </Grid>
