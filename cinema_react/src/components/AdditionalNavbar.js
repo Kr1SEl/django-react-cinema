@@ -12,7 +12,7 @@ import Pricing from '../containers/App/PricingsPage';
 const useStyles = makeStyles((theme) => ({
     appBar: {
         background: 'linear-gradient(to bottom, #343434, #000000)',
-        height: 150
+        height: 100
     },
     title: {
         flexGrow: 1,

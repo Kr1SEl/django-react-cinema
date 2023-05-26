@@ -12,7 +12,7 @@ environ.Env.read_env()
 
 
 def get_qr_code(ticket_id):
-    url = "http://localhost:8080/tickets/qr/33"
+    url = f"http://localhost:8080/tickets/qr/{ticket_id}"
     payload = {}
     headers = {}
     response = requests.request("GET", url, headers=headers, data=payload)
