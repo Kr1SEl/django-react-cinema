@@ -41,7 +41,10 @@ class MovieAPIView(APIView):
             total_grade = 0.0
             for review in reviews:
                 total_grade += review.grade
-            average_grade = total_grade / len(reviews)
+            if len(reviews) > 0:
+                average_grade = total_grade / len(reviews)
+            else:
+                average_grade = 'No grade'
             serialized_data = serializer.data
             serialized_data['grade'] = average_grade
             serialized_data['reviews'] = list(reviews.values())
