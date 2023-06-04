@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from datetime import timedelta
+from django.core.validators import MinValueValidator, MaxValueValidator
+from cinema_users.models import UserAccount
 
 
 class Genre(models.Model):
@@ -17,7 +19,6 @@ class Movie(models.Model):
     is_active = models.BooleanField(default=True, blank=False, null=False)
     length_mins = models.IntegerField(blank=False, null=False)
     genres = models.ManyToManyField(Genre)
-    grade = models.FloatField(blank=False, null=False)
     description = models.TextField(blank=False, null=False)
     directed_by = models.CharField('Producer', max_length=100)
     production_year = models.IntegerField(blank=False, null=False)
@@ -28,6 +29,16 @@ class Movie(models.Model):
 
     def __str__(self):
         return f'Movie Name: {self.name}'
+
+
+class Review(models.Model):
+    id = models.AutoField(primary_key=True)
+    movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, null=False, blank=False)
+    user_id = models.ForeignKey(UserAccount, on_delete=models.DO_NOTHING, null=False, blank=False)
+    review = models.TextField(blank=True, null=False, max_length=300)
+    grade = models.IntegerField(blank=False, null=False,
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
 
 
 class Hall(models.Model):

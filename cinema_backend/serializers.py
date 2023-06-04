@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie, Hall, MovieSession, Genre
+from .models import Movie, Hall, MovieSession, Genre, Review
 import base64
 from django.core.files.base import ContentFile
 
@@ -23,6 +23,7 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = '__all__'
+        
 
 
 class MovieSerializer(serializers.ModelSerializer):
@@ -31,6 +32,14 @@ class MovieSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Movie
+        fields = '__all__'
+
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user_id = serializers.ReadOnlyField(source='user_id.name') 
+    class Meta:
+        model = Review
         fields = '__all__'
 
 

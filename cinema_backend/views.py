@@ -16,8 +16,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import Movie, Hall, MovieSession, Genre
-from .serializers import MovieSerializer, HallSerializer, MovieSessionSerializer, GenreSerializer
+from .models import Movie, Hall, MovieSession, Genre, Review
+from .serializers import MovieSerializer, HallSerializer, MovieSessionSerializer, GenreSerializer, ReviewSerializer
 
 
 class GenreAPIView(APIView):
@@ -37,10 +37,22 @@ class MovieAPIView(APIView):
         if pk:
             movie = Movie.objects.get(id=pk)
             serializer = MovieSerializer(movie)
-            return Response(serializer.data)
+            reviews = Review.objects.filter(movie_id = movie)
+            total_grade = 0.0
+            for review in reviews:
+                total_grade += review.grade
+            average_grade = total_grade / len(reviews)
+            serialized_data = serializer.data
+            serialized_data['grade'] = average_grade
+            serialized_data['reviews'] = list(reviews.values())
+            return Response(serialized_data)
         else:
-            movies = Movie.objects.all()
+            if 'genre' in request.data:
+                movies = Movie.objects.filter(genres__name=request.data['genre'])
+            else:
+                movies = Movie.objects.all()
             serializer = MovieSerializer(movies, many=True)
+            print(len(movies))
             return Response(serializer.data)
 
 
@@ -53,6 +65,43 @@ class HallAPIView(APIView):
             halls = Hall.objects.all()
             serializer = HallSerializer(halls, many=True)
             return Response(serializer.data)
+
+
+class ReviewAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    
+    def get(self, request, movie_id):
+        reviews = Review.objects.filter(movie_id=movie_id)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+        
+    def post(self, request, movie_id):
+        if request.user.is_authenticated:
+            if len(Movie.objects.filter(id=movie_id)) == 0:
+                return JsonResponse({'error': 'Movie not found'}, status=404)
+            if int(request.data['grade']) < 1 or int(request.data['grade']) > 5:
+                return JsonResponse({'error': 'Wrong grade'}, status=404)
+            movie = Movie.objects.get(id=movie_id)
+            if len(Review.objects.filter(movie_id = movie, user_id=request.user))>0:
+                return JsonResponse({'error': 'Comment was already placed for this movie'}, status=403)
+            review = Review.objects.create(movie_id=movie, user_id=request.user, review=request.data['review'], grade=int(request.data['grade']))
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data)
+        else:
+            return JsonResponse({'error': 'Unauthorized'}, status=401)
+    
+    def delete(self, request, movie_id):
+        if request.user.is_authenticated:
+            if len(Movie.objects.filter(id=movie_id)) == 0:
+                return JsonResponse({'error': 'Movie not found'}, status=404)
+            movie = Movie.objects.get(id=movie_id)
+            if len(Review.objects.filter(movie_id = movie, user_id=request.user))>0:
+                Review.objects.filter(movie_id = movie, user_id=request.user).delete()
+                return JsonResponse({'message': 'Comment deleted succesfully'}, status=200)
+            else:
+                return JsonResponse({'error': 'No comments found'}, status=404)
+        else:
+            return JsonResponse({'error': 'Unauthorized'}, status=401)
 
 
 class MovieSessionAPIView(APIView):
