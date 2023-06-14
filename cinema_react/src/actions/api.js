@@ -136,3 +136,69 @@ export const getTicketsForUser = async () => {
         return [];
     }
 };
+
+export const getReviews = async (movieId) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
+        const res = await axios.get(`/api/v1/reviews/${movieId}/`, config);
+        return res.data;
+    } catch (err) {
+        throw new Error('503 - Django server is down');
+    }
+};
+
+export const postReview = async (movieId, review) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access')}`,
+            'Accept': 'application/json'
+        }
+    };
+    try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
+        const body = JSON.stringify(review);
+        const res = await axios.post(`/api/v1/reviews/${movieId}/`, body, config);
+        return res.data;
+    } catch (err) {
+        throw new Error('503 - Django server is down');
+    }
+};
+
+
+export const getGenres = async () => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
+        const res = await axios.get(`/api/v1/genres/`, config);
+        return res.data;
+    } catch (err) {
+        throw new Error('503 - Django server is down');
+    }
+};
+
+export const getMoviesByGenre = async (genre) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    try {
+        axios.defaults.baseURL = 'http://127.0.0.1:8000'
+        const res = await axios.get(`/api/v1/movies/`, { params: { genre: genre } }, config);
+        return res.data;
+    } catch (err) {
+        throw new Error('503 - Django server is down');
+    }
+};
