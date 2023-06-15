@@ -16,6 +16,7 @@ const MoviePage = ({ match }) => {
         <br />
       </StylesProvider>
       <SessionTable movieId={match.params.movieID} />
+      <br />
       <Review movieId={match.params.movieID} />
     </div>
   );
