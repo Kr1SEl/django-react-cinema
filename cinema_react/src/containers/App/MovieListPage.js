@@ -68,7 +68,7 @@ const MovieListPage = () => {
                       value={search}
                       onChange={e => setSearch(e.target.value)}
                     />
-                    <FormControl>
+                    <FormControl style={{ width: '200px' }}>
                       <InputLabel id="genre-label">
                         Genre
                       </InputLabel>
