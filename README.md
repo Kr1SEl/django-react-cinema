@@ -22,6 +22,8 @@ Technology Stack:
 4. Microservice: SpringBoot (Ticket Validation)
 5. Email Delivery: SMTP
 
+[Ticket Validation System](https://github.com/Alexei-Savich/ticket-validation-system/tree/dev)
+
 ## Instalation Guide
 
 ```
