@@ -1,9 +1,9 @@
 # WroclawCinema
 
-Description:
+**Description:**
 WroclawCinema, a state-of-the-art cinema platform, seamlessly merges the realms of technology and entertainment. Crafted with Django for the backend, React with MaterialUI for the frontend, and driven by MySQL as the database, WroclawCinema offers a holistic cinematic experience for both registered users and quick-ticket buyers.
 
-User Features:
+**User Features:**
 1. User Authorization: Create an account or log in securely for a personalized experience, managing bookings and special offers.
 2. Seat Selection: Enjoy an interactive seat selection interface, allowing users to choose preferred seats for upcoming movie sessions.
 3. Filtering Options: Easily find movies using advanced filtering options such as genre or movie name.
@@ -11,11 +11,11 @@ User Features:
 5. Great UI: Immerse yourself in a visually appealing and user-friendly interface, designed with React and MaterialUI for a modern and responsive experience.
 6. Fast Ticket Purchase: For non-registered users, quickly purchase tickets by entering an email address. Tickets are swiftly delivered to the provided email for a seamless movie-going experience.
 
-Staff Features:
+**Staff Features:**
 1. Admin Panel: Efficiently manage users, movie sessions, and cinema operations with a robust admin panel.
 2. Ticket Validation Microservice: Utilize the SpringBoot-based microservice for ticket validation. Staff can scan QR codes to check previous validations and obtain information about ticket holders and associated movie sessions.
 
-Technology Stack:
+**Technology Stack:**
 1. Backend Framework: Django
 2. Frontend Library: React with MaterialUI
 3. Database: MySQL
